@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { tumHaberler, haberBul, kaynaklariNormalize } from "@/lib/content";
@@ -99,6 +100,18 @@ export default async function HaberSayfasi({ params }: Props) {
           <p className="mt-5 border-l-2 border-terra pl-4 text-lg leading-relaxed text-solgun">
             {haber.ozet}
           </p>
+
+          {/* Kapak görseli — kenarlardan taşarak metin sütununu kırar, sayfa nefes alsın */}
+          <figure className="relative mt-9 aspect-[1200/630] overflow-hidden rounded-sm bg-kum md:-mx-16">
+            <Image
+              src={haber.gorsel}
+              alt=""
+              fill
+              priority
+              sizes="(max-width: 768px) 100vw, 900px"
+              className="object-cover"
+            />
+          </figure>
 
           <div className="makale mt-10">
             <MDXRemote source={haber.icerik} components={{ GeriOdeme }} />

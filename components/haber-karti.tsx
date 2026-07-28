@@ -1,27 +1,39 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Haber } from "@/lib/content";
 import { tarihFormatla } from "@/lib/site";
 import { Minyatur, type MinyaturTipi } from "@/components/mini";
 
 /**
- * Kategoriye göre minyatür seçimi.
- * Frontmatter'da `minyatur` verilirse o kazanır.
+ * Kart görseli, `npm run gorsel` ile üretilen kategori çizimidir — stok fotoğraf değil.
+ * Hesaplayıcı içeren haberler ayrıca rozetle işaretlenir; okur için gerçek bir sinyal.
  */
-function minyaturSec(haber: Haber): MinyaturTipi {
-  if (haber.minyatur) return haber.minyatur;
-  const k = haber.kategoriSlug;
-  if (k.includes("isletme")) return "cubuklar";
-  if (k.includes("mevzuat")) return "egri";
-  if (k.includes("veri")) return "halka";
-  return "kadran";
+
+/**
+ * Sağ üstte durur: görselin kendi kategori etiketi sol üstte olduğu için
+ * sola konduğunda üst üste biniyor.
+ */
+function AracRozeti() {
+  return (
+    <span className="etiket absolute right-2.5 top-2.5 z-10 rounded-sm bg-krem/92 px-2 py-1 text-cam">
+      Hesaplayıcı var
+    </span>
+  );
 }
 
 export function HaberKarti({ haber }: { haber: Haber }) {
   return (
     <article className="group">
       <Link href={`/haber/${haber.slug}`} className="block">
-        <div className="grid h-[118px] place-items-center overflow-hidden rounded-sm bg-kum text-cam">
-          <Minyatur tipi={minyaturSec(haber)} />
+        <div className="relative aspect-[1200/630] overflow-hidden rounded-sm bg-kum">
+          {haber.aracVar && <AracRozeti />}
+          <Image
+            src={haber.gorsel}
+            alt=""
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+          />
         </div>
 
         <div className="etiket mt-3.5 flex flex-wrap items-center gap-x-2.5 text-solgun">
@@ -40,7 +52,7 @@ export function HaberKarti({ haber }: { haber: Haber }) {
   );
 }
 
-/** Ana sayfa manşeti — başlık ızgaraya dağıtılır. */
+/** Ana sayfa manşeti — görsel solda, başlık ızgaraya dağıtılmış hâlde sağda. */
 export function MansetKarti({ haber }: { haber: Haber }) {
   return (
     <article>
@@ -51,25 +63,36 @@ export function MansetKarti({ haber }: { haber: Haber }) {
       </div>
 
       <Link href={`/haber/${haber.slug}`} className="group mt-5 block">
-        <div className="grid items-end gap-5 md:grid-cols-6 md:gap-6">
-          <h1 className="gir gir-sol text-4xl leading-[1.02] tracking-tight decoration-terra decoration-2 underline-offset-[6px] group-hover:underline md:col-span-4 md:text-[3.6rem]">
-            {haber.baslik}
-          </h1>
-          <p className="gir gir-sag pb-2 text-[1.02rem] leading-relaxed text-solgun md:col-span-2">
-            {haber.ozet}
-          </p>
+        <div className="grid gap-7 md:grid-cols-12 md:gap-8">
+          <div className="gir gir-sol relative aspect-[1200/630] overflow-hidden rounded-sm bg-kum md:col-span-7">
+            {haber.aracVar && <AracRozeti />}
+            <Image
+              src={haber.gorsel}
+              alt=""
+              fill
+              priority
+              sizes="(max-width: 768px) 100vw, 58vw"
+              className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+            />
+          </div>
+
+          <div className="gir gir-sag flex flex-col justify-center md:col-span-5">
+            <h1 className="text-[2rem] leading-[1.05] tracking-tight decoration-terra decoration-2 underline-offset-[6px] group-hover:underline md:text-[2.6rem]">
+              {haber.baslik}
+            </h1>
+            <p className="mt-4 text-[1.02rem] leading-relaxed text-solgun">{haber.ozet}</p>
+            <div className="etiket mt-5 flex flex-wrap gap-4 text-solgun">
+              <time dateTime={haber.tarih}>{tarihFormatla(haber.tarih)}</time>
+              <span>{haber.okumaSuresi} dk okuma</span>
+            </div>
+          </div>
         </div>
       </Link>
-
-      <div className="etiket mt-6 flex flex-wrap gap-4 text-solgun">
-        <time dateTime={haber.tarih}>{tarihFormatla(haber.tarih)}</time>
-        <span>{haber.okumaSuresi} dk okuma</span>
-      </div>
     </article>
   );
 }
 
-/** Şerit kartı — sahne 05 içinde kullanılır. */
+/** Şerit kartı — sahne 05 içinde. Araçların kendisi canlı minyatürle temsil edilir. */
 export function AracKarti({
   etiket,
   baslik,

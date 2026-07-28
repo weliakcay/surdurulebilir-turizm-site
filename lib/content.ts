@@ -35,6 +35,8 @@ export type Haber = HaberOnBilgi & {
   icerik: string;
   kategoriSlug: string;
   okumaSuresi: number;
+  /** Metne gömülü bir hesaplayıcı var mı — kartta rozet olarak gösterilir. */
+  aracVar: boolean;
 };
 
 /** Frontmatter'ı doğrular. Eksik alan varsa build'i patlatır — sessizce geçmez. */
@@ -91,6 +93,7 @@ export function tumHaberler({ taslaklarDahil = false } = {}): Haber[] {
         icerik: content,
         kategoriSlug: slugify(on.kategori),
         okumaSuresi: okumaSuresiHesapla(content),
+        aracVar: /<GeriOdeme[\s/>]/.test(content),
       };
     })
     .filter((h) => taslaklarDahil || !h.taslak)
