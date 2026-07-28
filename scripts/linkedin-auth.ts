@@ -7,7 +7,10 @@
  *   npm run linkedin:auth -- --token <tkn> → Developer Portal Token Generator'dan alınan
  *                                            token'ı doğrudan kaydeder
  */
-import "dotenv/config";
+import { config as ortamYukle } from "dotenv";
+// .env.local Next.js sözleşmesidir; dotenv varsayılan olarak yalnızca .env okur.
+ortamYukle({ path: ".env.local" });
+ortamYukle(); // .env varsa o da yüklensin (öncelik .env.local'da)
 import { koduTakasEt, depoYaz, depoOku, gunKaldi } from "../lib/linkedin/token";
 
 const AUTH_URL = "https://www.linkedin.com/oauth/v2/authorization";

@@ -4,7 +4,10 @@
  *
  *   npm run linkedin:durum
  */
-import "dotenv/config";
+import { config as ortamYukle } from "dotenv";
+// .env.local Next.js sözleşmesidir; dotenv varsayılan olarak yalnızca .env okur.
+ortamYukle({ path: ".env.local" });
+ortamYukle(); // .env varsa o da yüklensin (öncelik .env.local'da)
 import { depoOku, gunKaldi } from "../lib/linkedin/token";
 import {
   yonetilenSayfalar,

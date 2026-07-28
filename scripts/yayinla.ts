@@ -7,7 +7,10 @@
  *
  * Sıra önemlidir: LinkedIn postundaki link canlı olmadan post atılmaz.
  */
-import "dotenv/config";
+import { config as ortamYukle } from "dotenv";
+// .env.local Next.js sözleşmesidir; dotenv varsayılan olarak yalnızca .env okur.
+ortamYukle({ path: ".env.local" });
+ortamYukle(); // .env varsa o da yüklensin (öncelik .env.local'da)
 import fs from "node:fs";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
