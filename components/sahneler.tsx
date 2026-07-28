@@ -7,7 +7,14 @@ import { kaydirmaDinle, sahneIlerlemesi, ara, yumusat, kis, azHareket } from "@/
 
 const KARE_RENK = ["#16302a", "#1e3d34", "#3c6154", "#5f8172", "#8aa89a"];
 
-export function SahneZoom({ baslik }: { baslik: ReactNode }) {
+export function SahneZoom({
+  baslik,
+  varisGorseli,
+}: {
+  baslik: ReactNode;
+  /** En içteki kareye basılan fotoğraf — kareler içine daldıkça gerçek bir yere varılır. */
+  varisGorseli?: string;
+}) {
   const kok = useRef<HTMLElement>(null);
   const kareler = useRef<(HTMLDivElement | null)[]>([]);
   const marka = useRef<HTMLDivElement>(null);
@@ -39,23 +46,47 @@ export function SahneZoom({ baslik }: { baslik: ReactNode }) {
     <section ref={kok} className="sahne relative" style={{ height: "320vh" }}>
       <div className="sahne-yapisik grid place-items-center bg-krem">
         <div className="izgara" />
-        {KARE_RENK.map((renk, i) => (
-          <div
-            key={renk}
-            ref={(el) => {
-              kareler.current[i] = el;
-            }}
-            aria-hidden
-            className="absolute rounded-sm"
-            style={{
-              width: "46vmin",
-              height: "46vmin",
-              background: renk,
-              willChange: "transform, opacity",
-              transform: `scale(${Math.pow(2.15, -i)})`,
-            }}
-          />
-        ))}
+        {KARE_RENK.map((renk, i) => {
+          // En içteki kare varış noktası: düz renk yerine gerçek bir yer.
+          const varis = varisGorseli && i === KARE_RENK.length - 1;
+          return (
+            <div
+              key={renk}
+              ref={(el) => {
+                kareler.current[i] = el;
+              }}
+              aria-hidden
+              className="absolute overflow-hidden rounded-sm"
+              style={{
+                width: "46vmin",
+                height: "46vmin",
+                background: renk,
+                willChange: "transform, opacity",
+                transform: `scale(${Math.pow(2.15, -i)})`,
+              }}
+            >
+              {varis && (
+                <>
+                  {/*
+                   * DİKKAT: burada background-image KULLANILMAZ.
+                   * Bu kare 30 katına kadar ölçekleniyor; background-size:cover
+                   * her karede yeniden rasterize edilip ana iş parçacığını
+                   * kilitliyor (sayfa tamamen donuyor). <img> + translateZ ile
+                   * katman GPU'ya taşınıyor, ölçekleme bedava oluyor.
+                   */}
+                  <img
+                    src={varisGorseli}
+                    alt=""
+                    className="absolute inset-0 h-full w-full object-cover"
+                    style={{ transform: "translateZ(0)" }}
+                  />
+                  {/* Marka yazısı fotoğrafın üstünde okunabilsin diye perde */}
+                  <div className="absolute inset-0 bg-[#081713]/45" />
+                </>
+              )}
+            </div>
+          );
+        })}
         <div
           ref={marka}
           className="absolute z-10 px-6 text-center text-krem"
