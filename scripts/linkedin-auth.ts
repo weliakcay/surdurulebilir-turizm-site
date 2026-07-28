@@ -12,7 +12,12 @@ import { koduTakasEt, depoYaz, depoOku, gunKaldi } from "../lib/linkedin/token";
 
 const AUTH_URL = "https://www.linkedin.com/oauth/v2/authorization";
 
-const SCOPE_VARSAYILAN = "w_organization_social r_organization_social";
+/** Hedefe göre varsayılan scope — LINKEDIN_SCOPE ile ezilebilir. */
+function varsayilanScope(): string {
+  return process.env.LINKEDIN_HEDEF === "organizasyon"
+    ? "w_organization_social r_organization_social"
+    : "openid profile w_member_social";
+}
 
 function arg(ad: string): string | undefined {
   const i = process.argv.indexOf(`--${ad}`);
@@ -65,7 +70,7 @@ async function main() {
   // --- Yetkilendirme bağlantısını üret ---
   const clientId = zorunlu("LINKEDIN_CLIENT_ID");
   const redirect = zorunlu("LINKEDIN_REDIRECT_URI");
-  const scope = process.env.LINKEDIN_SCOPE ?? SCOPE_VARSAYILAN;
+  const scope = process.env.LINKEDIN_SCOPE ?? varsayilanScope();
   const state = `st${Date.now().toString(36)}`;
 
   const url =

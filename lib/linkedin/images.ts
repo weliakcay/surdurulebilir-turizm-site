@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { API_TABAN, basliklar, organizasyonUrn, LinkedInHatasi } from "./client";
+import { API_TABAN, basliklar, yazarUrn, LinkedInHatasi } from "./client";
 
 /**
  * Images API — iki adımlı yükleme.
@@ -39,7 +39,9 @@ export async function gorselYukle(yerelYol: string): Promise<string> {
   const baslat = await fetch(`${API_TABAN}/images?action=initializeUpload`, {
     method: "POST",
     headers: await basliklar({ "Content-Type": "application/json" }),
-    body: JSON.stringify({ initializeUploadRequest: { owner: organizasyonUrn() } }),
+    // Sahip, postun yazarıyla AYNI olmalı — kişisel profile atarken
+    // organizasyon sahipli görsel 403 döner.
+    body: JSON.stringify({ initializeUploadRequest: { owner: await yazarUrn() } }),
   });
 
   if (!baslat.ok) {

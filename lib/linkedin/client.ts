@@ -47,19 +47,61 @@ export class LinkedInHatasi extends Error {
   }
 }
 
-/** Organizasyon URN'i — yayın hedefi. */
+/**
+ * Yayın hedefi: şirket sayfası mı, kişisel profil mi?
+ *
+ * Şirket sayfası `w_organization_social` ister (Community Management API ürünü,
+ * LinkedIn incelemesinden geçer). Kişisel profil `w_member_social` ile yeter
+ * ("Share on LinkedIn" ürünü, self-servis). Onay beklerken kişisel profille
+ * yayına başlanabilsin diye ikisi de destekleniyor.
+ */
+export type Hedef = "organizasyon" | "kisi";
+
+export function hedefTuru(): Hedef {
+  const h = process.env.LINKEDIN_HEDEF;
+  if (h === "kisi" || h === "organizasyon") return h;
+  // geriye dönük: organizasyon URN'i ayarlıysa şirket sayfası varsayılır
+  return process.env.LINKEDIN_ORGANIZATION_URN ? "organizasyon" : "kisi";
+}
+
+/** Organizasyon URN'i — şirket sayfası hedefi için. */
 export function organizasyonUrn(): string {
   const urn = process.env.LINKEDIN_ORGANIZATION_URN;
   if (!urn) {
     throw new Error(
-      "LINKEDIN_ORGANIZATION_URN eksik.\n" +
-        "  Bulmak için: npm run linkedin:durum",
+      "LINKEDIN_ORGANIZATION_URN eksik.\n" + "  Bulmak için: npm run linkedin:durum",
     );
   }
   if (!urn.startsWith("urn:li:organization:")) {
-    throw new Error(`LINKEDIN_ORGANIZATION_URN "urn:li:organization:123" biçiminde olmalı, gelen: ${urn}`);
+    throw new Error(
+      `LINKEDIN_ORGANIZATION_URN "urn:li:organization:123" biçiminde olmalı, gelen: ${urn}`,
+    );
   }
   return urn;
+}
+
+/** Yetkilendiren üyenin kendi URN'i — kişisel profil hedefi için. */
+export async function kisiUrn(): Promise<string> {
+  if (process.env.LINKEDIN_PERSON_URN) return process.env.LINKEDIN_PERSON_URN;
+
+  const yanit = await fetch("https://api.linkedin.com/v2/userinfo", {
+    headers: { Authorization: `Bearer ${await tokenHazirla()}` },
+  });
+  if (!yanit.ok) {
+    throw new LinkedInHatasi(
+      yanit.status,
+      await yanit.text(),
+      "kişi bilgisi (userinfo — 'profile' scope'u gerekir)",
+    );
+  }
+  const veri = (await yanit.json()) as { sub?: string };
+  if (!veri.sub) throw new Error("userinfo yanıtında 'sub' yok — kişi URN'i belirlenemedi.");
+  return `urn:li:person:${veri.sub}`;
+}
+
+/** Post'un author alanı — hedefe göre. */
+export async function yazarUrn(): Promise<string> {
+  return hedefTuru() === "organizasyon" ? organizasyonUrn() : kisiUrn();
 }
 
 export type MakalePostu = {
@@ -79,7 +121,7 @@ export type MakalePostu = {
  */
 export async function makalePostuAt(p: MakalePostu): Promise<string> {
   const govde = {
-    author: organizasyonUrn(),
+    author: await yazarUrn(),
     commentary: p.yorum,
     visibility: "PUBLIC",
     distribution: {

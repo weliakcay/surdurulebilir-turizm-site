@@ -6,7 +6,13 @@
  */
 import "dotenv/config";
 import { depoOku, gunKaldi } from "../lib/linkedin/token";
-import { yonetilenSayfalar, API_SURUM, organizasyonUrn } from "../lib/linkedin/client";
+import {
+  yonetilenSayfalar,
+  API_SURUM,
+  organizasyonUrn,
+  kisiUrn,
+  hedefTuru,
+} from "../lib/linkedin/client";
 
 const isaret = (v: unknown) => (v ? "✓" : "✗");
 
@@ -44,6 +50,19 @@ async function main() {
       console.log("  ⚠ refresh token YOK — süre dolunca elle yeniden yetkilendirme gerekir");
     }
     console.log(`  · scope: ${depo.scope ?? "bilinmiyor"}`);
+  }
+
+  console.log(`\nYayın hedefi: ${hedefTuru() === "organizasyon" ? "ŞİRKET SAYFASI" : "KİŞİSEL PROFİL"}`);
+  console.log("  (LINKEDIN_HEDEF ile değiştirilir: organizasyon | kisi)");
+
+  console.log("\nKişisel profil");
+  try {
+    const k = await kisiUrn();
+    console.log(`  ✓ ${k}`);
+    console.log("    w_member_social varsa buraya post atılabilir");
+  } catch (e) {
+    console.log(`  ✗ ${e instanceof Error ? e.message.split("\n")[0] : String(e)}`);
+    console.log("    'profile' scope'u eksik olabilir — Share on LinkedIn ürünü bunu verir");
   }
 
   console.log("\nYönetici olduğunuz sayfalar");
