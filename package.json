@@ -11,7 +11,8 @@
     "yayinla": "tsx scripts/yayinla.ts",
     "linkedin:auth": "tsx scripts/linkedin-auth.ts",
     "linkedin:durum": "tsx scripts/linkedin-durum.ts",
-    "kaynak:kontrol": "tsx scripts/kaynak-kontrol.ts"
+    "kaynak:kontrol": "tsx scripts/kaynak-kontrol.ts",
+    "gorsel:ai": "tsx scripts/gorsel-ai.ts"
   },
   "dependencies": {
     "gray-matter": "^4.0.3",

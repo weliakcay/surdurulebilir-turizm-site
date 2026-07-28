@@ -43,3 +43,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# AI ham görselleri — yeniden kaplama için tutulur, repoya girmez
+public/haberler/.ham/
