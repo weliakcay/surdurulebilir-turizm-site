@@ -1,0 +1,273 @@
+@import "tailwindcss";
+
+/*
+  Palet ve tipografi 2026-07-27'de kilitlendi → 01-marka/marka-kimligi.md
+  Mantık: sıcak nötr zemin + tek koyu aile + iki muhatabı ayıran eksen.
+  Yeşil var ama zemin değil — klişeye o yüzden düşmüyor.
+*/
+@theme {
+  --color-krem: #f4eee5;
+  --color-kum: #ece3d6;
+  --color-murekkep: #23312b;
+  --color-solgun: #6d7d74;
+  --color-cam: #1e3d34;
+  --color-cam2: #2c5648;
+  --color-adacayi: #7c9a83;
+  --color-terra: #c0663a;
+  --color-yosun: #8fb03f;
+  --color-cizgi: #ddd2c1;
+  --color-kart: #fffdf8;
+
+  --font-baslik: var(--font-newsreader), Georgia, serif;
+  --font-mono: var(--font-mono-jb), ui-monospace, monospace;
+}
+
+/*
+  DİKKAT: html/body üzerinde overflow-x:hidden KULLANILMAZ.
+  Ata elemanda scroll bağlamı yaratır ve kaydırma sahnelerindeki
+  position:sticky'yi sessizce bozar. clip aynı işi görür.
+*/
+html {
+  overflow-x: clip;
+}
+
+body {
+  background: var(--color-krem);
+  color: var(--color-murekkep);
+  font-family: var(--font-baslik);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- görünür ızgara: sayfanın imzası ---------- */
+.izgara {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+  background-image: repeating-linear-gradient(
+    to right,
+    transparent,
+    transparent calc(16.666% - 1px),
+    var(--color-cizgi) calc(16.666% - 1px),
+    var(--color-cizgi) 16.666%
+  );
+}
+.izgara-koyu {
+  opacity: 0.14;
+}
+
+/* ---------- mono etiket ---------- */
+.etiket {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* ---------- haber gövdesi ---------- */
+.makale {
+  font-size: 1.1875rem;
+  line-height: 1.75;
+}
+.makale > * + * {
+  margin-top: 1.3em;
+}
+.makale h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-top: 2.4em;
+  letter-spacing: -0.018em;
+}
+.makale h3 {
+  font-size: 1.22rem;
+  font-weight: 700;
+  margin-top: 2em;
+}
+.makale a {
+  color: var(--color-cam);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+.makale a:hover {
+  color: var(--color-terra);
+}
+.makale ul {
+  list-style: disc;
+  padding-left: 1.4em;
+}
+.makale ol {
+  list-style: decimal;
+  padding-left: 1.4em;
+}
+.makale li + li {
+  margin-top: 0.45em;
+}
+.makale blockquote {
+  border-left: 2px solid var(--color-terra);
+  padding-left: 1.1em;
+  color: var(--color-solgun);
+}
+.makale strong {
+  font-weight: 700;
+}
+
+/* ---------- hareket ----------
+   Tek eğri, 800 ms. Her öğe bir kez girer, geri sarmaz. */
+.gir {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1),
+    transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.gir-sol {
+  transform: translateX(-24px);
+}
+.gir-sag {
+  transform: translateX(24px);
+}
+.gir.ac {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- canlı minyatürler ---------- */
+.mini-kadran-dolgu {
+  stroke: var(--color-cam);
+  stroke-dasharray: 157;
+  stroke-dashoffset: 157;
+  animation: mini-kadran 3.2s ease-out infinite;
+}
+@keyframes mini-kadran {
+  0% { stroke-dashoffset: 157; }
+  45%, 85% { stroke-dashoffset: 58; }
+  100% { stroke-dashoffset: 157; }
+}
+
+.mini-cubuklar {
+  display: flex;
+  align-items: flex-end;
+  gap: 7px;
+  height: 100%;
+  max-height: 80px;
+}
+.mini-cubuklar i {
+  width: 15px;
+  border-radius: 2px 2px 0 0;
+  background: var(--color-adacayi);
+  animation: mini-zipla 2.8s ease-in-out infinite;
+}
+.mini-cubuklar i:nth-child(2) { background: var(--color-cam); animation-delay: 0.15s; }
+.mini-cubuklar i:nth-child(3) { animation-delay: 0.3s; }
+.mini-cubuklar i:nth-child(4) { background: var(--color-cam); animation-delay: 0.45s; }
+.mini-cubuklar i:nth-child(5) { animation-delay: 0.6s; }
+@keyframes mini-zipla {
+  0%, 100% { height: 24%; }
+  50% { height: 92%; }
+}
+
+.mini-egri-yol {
+  stroke: var(--color-cam);
+  stroke-dasharray: 260;
+  stroke-dashoffset: 260;
+  animation: mini-ciz 3.6s ease-out infinite;
+}
+@keyframes mini-ciz {
+  0% { stroke-dashoffset: 260; }
+  55%, 88% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: 260; }
+}
+.mini-egri-nokta {
+  fill: var(--color-terra);
+  opacity: 0;
+  animation: mini-belir 3.6s ease-out infinite;
+}
+@keyframes mini-belir {
+  0%, 48% { opacity: 0; }
+  62%, 88% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Hareket azaltılmışsa minyatürler son durumda donar */
+@media (prefers-reduced-motion: reduce) {
+  .mini-kadran-dolgu { stroke-dashoffset: 58; }
+  .mini-egri-yol { stroke-dashoffset: 0; }
+  .mini-egri-nokta { opacity: 1; }
+  .mini-cubuklar i { height: 60%; }
+}
+
+/* ---------- erişilebilirlik ---------- */
+:focus-visible {
+  outline: 2px solid var(--color-terra);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gir {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  /* Sahneler sabitlenmeyi bırakır, içerik düz akar */
+  .sahne {
+    height: auto !important;
+  }
+  .sahne-yapisik {
+    position: relative !important;
+    height: auto !important;
+    min-height: 60vh;
+    padding: 3rem 0;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- kaydırma sahnesi iskeleti ---------- */
+.sahne-yapisik {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* aralık kaydırıcısı — araçlarda kullanılıyor */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 99px;
+  outline: none;
+  cursor: pointer;
+  background: linear-gradient(
+    90deg,
+    var(--color-yosun) var(--dolu, 40%),
+    color-mix(in srgb, currentColor 18%, transparent) var(--dolu, 40%)
+  );
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  border: 3px solid var(--color-yosun);
+  cursor: grab;
+}
+input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  border: 3px solid var(--color-yosun);
+  cursor: grab;
+}
