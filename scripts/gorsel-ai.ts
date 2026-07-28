@@ -46,7 +46,48 @@ const STILLER = {
     "documentary editorial photograph, natural daylight, muted earthy colour grading with " +
     "deep green and terracotta tones, real place and real people at work, no posed models, " +
     "shallow depth of field, generous negative space on the left third",
+  yakin:
+    "close-up documentary photograph of a single object or detail, natural light, shallow " +
+    "depth of field, muted earthy tones, tactile and material, generous negative space on the left",
 } as const;
+
+/**
+ * Marka renk işlemesi — TUTARLILIĞIN ASIL KAYNAĞI.
+ *
+ * Görsel nereden gelirse gelsin (AI çizim, AI fotoğraf, gerçek fotoğraf) aynı
+ * işlemeden geçer: doygunluk kısılır, gölgelere derin çam basılır, ışıklara sıcak
+ * krem gelir. Böylece farklı kaynaklardan gelen görseller yan yana geldiğinde
+ * aynı yayına ait görünür.
+ *
+ * Bu, "her paylaşımda aynı AI çizimi" yapmadan tutarlılık sağlamanın yolu.
+ */
+async function markaRengi(girdi: Buffer): Promise<Buffer> {
+  const { width = 1200, height = 630 } = await sharp(girdi).metadata();
+
+  const camYikama = await sharp({
+    create: { width, height, channels: 4, background: { r: 30, g: 61, b: 52, alpha: 1 } },
+  })
+    .png()
+    .toBuffer();
+
+  const kremYikama = await sharp({
+    create: { width, height, channels: 4, background: { r: 244, g: 238, b: 229, alpha: 1 } },
+  })
+    .png()
+    .toBuffer();
+
+  return sharp(girdi)
+    // 1) doygunluğu kıs — ham AI ve stok fotoğraf genelde fazla canlı
+    .modulate({ saturation: 0.72, brightness: 1.03 })
+    .composite([
+      // 2) gölgelere derin çam — yeşil aile bütün görsellere işler
+      { input: camYikama, blend: "soft-light" },
+      // 3) ışıklara sıcak krem — soğuk mavi tonları kırar
+      { input: kremYikama, blend: "overlay", opacity: 0.14 } as never,
+    ])
+    .linear(1.04, -6) // hafif kontrast
+    .toBuffer();
+}
 
 function anahtar(): string {
   const k = process.env.KIE_API_KEY;
@@ -210,13 +251,28 @@ async function main() {
   const oran = bayrakDegeri("oran") ?? "2:1";
   const cozunurluk = bayrakDegeri("cozunurluk") ?? "1K";
 
-  let ham: Buffer;
+  // fs.readFileSync ve Buffer.from farklı ArrayBuffer türleri döndürüyor
+  let ham: Buffer<ArrayBufferLike>;
 
   /*
    * --kapla: ham görsel diskte varsa API'ye hiç gitmez, sadece marka katmanını
    * yeniden basar. Perde/etiket ayarı denerken her seferinde kredi yakmamak için.
    */
-  if (process.argv.includes("--kapla")) {
+  const kaynakDosya = bayrakDegeri("kaynak");
+
+  if (kaynakDosya) {
+    // Gerçek fotoğraf yolu: AI'ya hiç gidilmez, sadece marka işlemesi + katman.
+    if (!fs.existsSync(kaynakDosya)) {
+      console.error(`\n✗ Kaynak dosya bulunamadı: ${kaynakDosya}\n`);
+      process.exit(1);
+    }
+    ham = fs.readFileSync(kaynakDosya);
+    fs.writeFileSync(hamYol, await sharp(ham).png().toBuffer());
+    console.log(`\n══ Gerçek fotoğraf: ${slug} ══`);
+    console.log(`  kaynak   : ${kaynakDosya}`);
+    console.log(`  ⚠ Lisansı uygun olmalı → editoryal ilkeler md. 1`);
+    console.log(`  API çağrısı yok, ücret yok\n`);
+  } else if (process.argv.includes("--kapla")) {
     if (!fs.existsSync(hamYol)) {
       console.error(`\n✗ Ham görsel yok: ${hamYol}\n  Önce --kapla olmadan bir kez üretin.\n`);
       process.exit(1);
@@ -242,13 +298,19 @@ async function main() {
     console.log(`  ham kopya: ${path.relative(process.cwd(), hamYol)} (yeniden kaplama için)`);
   }
 
-  const taban = sharp(ham).resize(1200, 630, { fit: "cover", position: "attention" });
+  let taban: Buffer<ArrayBufferLike> = await sharp(ham)
+    .resize(1200, 630, { fit: "cover", position: "attention" })
+    .toBuffer();
+
+  // Marka renk işlemesi — kaynak ne olursa olsun aynı işlemden geçer.
+  if (!process.argv.includes("--ham-renk")) {
+    taban = await markaRengi(taban);
+  }
 
   if (sadeceHam) {
-    await taban.jpeg({ quality: 88, mozjpeg: true }).toFile(hedef);
+    await sharp(taban).jpeg({ quality: 88, mozjpeg: true }).toFile(hedef);
   } else {
-    const tabanBuf = await taban.toBuffer();
-    await sharp(tabanBuf)
+    await sharp(taban)
       .composite([{ input: markaKatmani(kategori ?? "HABER", VURGU[kategori ?? ""] ?? YOSUN) }])
       .jpeg({ quality: 88, mozjpeg: true })
       .toFile(hedef);
