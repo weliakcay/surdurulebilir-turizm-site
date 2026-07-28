@@ -122,6 +122,37 @@ export const KAYNAKLAR: Kaynak[] = [
     not: "Şirket kaynağı — kendi ürününü tanıtan içerik ayıklanmalı. Yıllık sürdürülebilir seyahat raporu buradan duyuruluyor.",
   },
 
+  {
+    ad: "edie",
+    url: "https://www.edie.net/rss/",
+    tur: "besleme",
+    dil: "en",
+    piller: ["uygulama", "mevzuat", "veri"],
+    guven: 3,
+    bayatGun: 7,
+    not: "İngiltere merkezli sürdürülebilirlik yayını, günlük akış. Turizm dışı içerik çok ama AB mevzuatı ve kurumsal uygulama örnekleri için en verimli kaynak.",
+  },
+  {
+    ad: "Eco-Business",
+    url: "https://www.eco-business.com/feeds/news/",
+    tur: "besleme",
+    dil: "en",
+    piller: ["uygulama", "mevzuat"],
+    guven: 3,
+    bayatGun: 14,
+    not: "Asya-Pasifik odaklı. Besleme ince (tek öğe döndürüyor) — site taraması destekleyebilir.",
+  },
+  {
+    ad: "Hotel Management",
+    url: "https://www.hotelmanagement.net/rss.xml",
+    tur: "besleme",
+    dil: "en",
+    piller: ["isletme", "uygulama"],
+    guven: 3,
+    bayatGun: 21,
+    not: "Otel işletmeciliği basını. Sürdürülebilirlik dışı içerik çoğunlukta, filtre gerekir.",
+  },
+
   // ─────────── Türkiye ───────────
   {
     ad: "Turizm Ajansı",
@@ -132,6 +163,34 @@ export const KAYNAKLAR: Kaynak[] = [
     guven: 3,
     bayatGun: 7,
     not: "Türkçe sektör haberi. Sürdürülebilirlik dışı içerik çok — filtre şart. 'Bizde örneği var mı' sorusunun ilk durağı.",
+  },
+  {
+    ad: "Turizm Gazetesi",
+    url: "https://www.turizmgazetesi.com/rss",
+    tur: "besleme",
+    dil: "tr",
+    piller: ["isletme", "mevzuat"],
+    guven: 3,
+    bayatGun: 7,
+  },
+  {
+    ad: "Turizm Günlüğü",
+    url: "https://www.turizmgunlugu.com/feed/",
+    tur: "besleme",
+    dil: "tr",
+    piller: ["isletme", "mevzuat"],
+    guven: 3,
+    bayatGun: 7,
+  },
+  {
+    ad: "Yeşil Ekonomi",
+    url: "https://yesilekonomi.com/feed/",
+    tur: "besleme",
+    dil: "tr",
+    piller: ["mevzuat", "veri"],
+    guven: 3,
+    bayatGun: 14,
+    not: "Türkçe yeşil ekonomi yayını. Turizme özel değil ama mevzuat ve karbon tarafında Türkçe karşılık bulmanın en iyi yolu.",
   },
 
   // ─────────── Beslemesi olmayanlar — elle/tarayarak ───────────
