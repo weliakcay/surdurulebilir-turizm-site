@@ -10,14 +10,22 @@ const KARE_RENK = ["#16302a", "#1e3d34", "#3c6154", "#5f8172", "#8aa89a"];
 export function SahneZoom({
   baslik,
   varisGorseli,
+  fonGorseli,
 }: {
   baslik: ReactNode;
   /** En içteki kareye basılan fotoğraf — kareler içine daldıkça gerçek bir yere varılır. */
   varisGorseli?: string;
+  /**
+   * Karelerin çevresindeki zemin: varış görselinin bulanık hâli.
+   * Odaklanmamış hedef; içine daldıkça netleşiyor.
+   * Dosya önceden bulanıklaştırılmış ve küçük — CSS blur büyük görselde pahalı.
+   */
+  fonGorseli?: string;
 }) {
   const kok = useRef<HTMLElement>(null);
   const kareler = useRef<(HTMLDivElement | null)[]>([]);
   const marka = useRef<HTMLDivElement>(null);
+  const varisKatman = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (azHareket() || !kok.current) return;
@@ -39,12 +47,34 @@ export function SahneZoom({
         marka.current.style.transform = `scale(${kis(mo, 0, 3.4).toFixed(3)})`;
         marka.current.style.opacity = String(ara(p, 0.52, 0.74) * kis(1 - ara(p, 0.94, 1)));
       }
+
+      /*
+       * Varış fotoğrafı sahne başında görünmez.
+       * O kare açılışta 14 px; 1200x630'luk fotoğraf o boyutta kırık görsel
+       * gibi duruyordu. Daldıkça beliriyor — hedef yaklaştıkça netleşiyor.
+       */
+      if (varisKatman.current) {
+        varisKatman.current.style.opacity = String(ara(p, 0.22, 0.58));
+      }
     });
   }, []);
 
   return (
     <section ref={kok} className="sahne relative" style={{ height: "320vh" }}>
       <div className="sahne-yapisik grid place-items-center bg-krem">
+        {fonGorseli && (
+          <>
+            <img
+              src={fonGorseli}
+              alt=""
+              aria-hidden
+              className="absolute inset-0 h-full w-full object-cover"
+              style={{ transform: "translateZ(0)" }}
+            />
+            {/* Krem yıkama: zemin açık kalsın, koyu kareler öne çıksın */}
+            <div className="absolute inset-0 bg-krem/68" />
+          </>
+        )}
         <div className="izgara" />
         {KARE_RENK.map((renk, i) => {
           // En içteki kare varış noktası: düz renk yerine gerçek bir yer.
@@ -66,14 +96,18 @@ export function SahneZoom({
               }}
             >
               {varis && (
-                <>
-                  {/*
-                   * DİKKAT: burada background-image KULLANILMAZ.
-                   * Bu kare 30 katına kadar ölçekleniyor; background-size:cover
-                   * her karede yeniden rasterize edilip ana iş parçacığını
-                   * kilitliyor (sayfa tamamen donuyor). <img> + translateZ ile
-                   * katman GPU'ya taşınıyor, ölçekleme bedava oluyor.
-                   */}
+                /*
+                 * DİKKAT: burada background-image KULLANILMAZ.
+                 * Bu kare 30 katına kadar ölçekleniyor; background-size:cover
+                 * her karede yeniden rasterize edilip ana iş parçacığını
+                 * kilitliyor (sayfa tamamen donuyor). <img> + translateZ ile
+                 * katman GPU'ya taşınıyor, ölçekleme bedava oluyor.
+                 */
+                <div
+                  ref={varisKatman}
+                  className="absolute inset-0"
+                  style={{ opacity: 0, willChange: "opacity" }}
+                >
                   <img
                     src={varisGorseli}
                     alt=""
@@ -82,7 +116,7 @@ export function SahneZoom({
                   />
                   {/* Marka yazısı fotoğrafın üstünde okunabilsin diye perde */}
                   <div className="absolute inset-0 bg-[#081713]/45" />
-                </>
+                </div>
               )}
             </div>
           );

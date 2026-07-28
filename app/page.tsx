@@ -17,6 +17,7 @@ export default function AnaSayfa() {
       {/* ── Sahne 01 — açılış ── */}
       <SahneZoom
         varisGorseli="/site/hero-varis.jpg"
+        fonGorseli="/site/hero-fon.jpg"
         baslik={
           <span className="text-3xl leading-none tracking-tight md:text-5xl">
             Sürdürülebilir
