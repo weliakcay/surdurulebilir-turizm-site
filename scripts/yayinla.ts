@@ -190,7 +190,14 @@ async function main() {
   console.log("  ✓ yazıldı");
 
   if (!ATLA_GIT) {
-    git("add", dosya);
+    /*
+     * Göreli yol ZORUNLU, mutlak yol değil.
+     * Proje yolunda Türkçe karakter var ("sürdürülebilir"). macOS dosya
+     * adlarını NFD (ayrık) biçiminde saklarken Node yolu NFC (birleşik)
+     * üretiyor; git ikisini eşleştiremeyip "is outside repository" diyor.
+     * git zaten cwd içinde çalıştığı için göreli yol bu sorunu tamamen atlar.
+     */
+    git("add", path.posix.join("content", "haberler", `${slug}.mdx`));
     git("commit", "-m", `linkedin: ${slug} → ${postUrn}`);
     git("push");
     console.log("  ✓ commit + push");
