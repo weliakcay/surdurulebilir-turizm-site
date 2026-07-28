@@ -10,7 +10,8 @@
     "gorsel": "tsx scripts/gorsel-uret.ts",
     "yayinla": "tsx scripts/yayinla.ts",
     "linkedin:auth": "tsx scripts/linkedin-auth.ts",
-    "linkedin:durum": "tsx scripts/linkedin-durum.ts"
+    "linkedin:durum": "tsx scripts/linkedin-durum.ts",
+    "kaynak:kontrol": "tsx scripts/kaynak-kontrol.ts"
   },
   "dependencies": {
     "gray-matter": "^4.0.3",
