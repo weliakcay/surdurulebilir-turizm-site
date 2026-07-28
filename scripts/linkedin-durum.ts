@@ -93,7 +93,15 @@ async function main() {
       }
     }
   } catch (e) {
-    console.log(`  ✗ ${e instanceof Error ? e.message : String(e)}`);
+    const m = e instanceof Error ? e.message : String(e);
+    if (m.includes("organizationAcls") || m.includes("403")) {
+      // Bu sorgu rw_organization_admin ister; yayın için GEREKMEZ.
+      console.log("  · listelenemedi — bu sorgu rw_organization_admin yetkisi istiyor");
+      console.log("    Yayın için gerekli değil: post atmak w_organization_social ile yapılıyor.");
+      console.log("    URN'i elle bulmak için şirket sayfasının HTML'inde 'urn:li:organization:' arayın.");
+    } else {
+      console.log(`  ✗ ${m}`);
+    }
   }
 
   console.log("\n═════════════════════════════\n");

@@ -174,9 +174,9 @@ export async function postuDogrula(urn: string): Promise<{ durum: string } | nul
 
 /** Yetkilendiren kişinin yönetici olduğu sayfaları listeler — organizasyon URN'i bulmak için. */
 export async function yonetilenSayfalar(): Promise<string[]> {
-  const url =
-    `${API_TABAN}/organizationAcls` +
-    `?q=roleAssignee&role=ADMINISTRATOR&state=APPROVED&projection=(elements*(organization))`;
+  // DİKKAT: bu endpoint `projection` parametresini kabul etmiyor —
+  // eklendiğinde 400 ILLEGAL_ARGUMENT döner.
+  const url = `${API_TABAN}/organizationAcls?q=roleAssignee&role=ADMINISTRATOR&state=APPROVED`;
 
   const yanit = await fetch(url, { headers: await basliklar() });
   if (!yanit.ok) {
