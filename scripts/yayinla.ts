@@ -4,6 +4,12 @@
  *   npm run yayinla <slug>
  *   npm run yayinla <slug> -- --dry        → hiçbir şey yayınlamaz, sadece ne olacağını gösterir
  *   npm run yayinla <slug> -- --atla-git   → git adımlarını atlar (site zaten canlıysa)
+ *   npm run yayinla <slug> -- --bicim gorsel  → link kartı yerine tam genişlikte görsel postu
+ *
+ * Biçim seçimi: --bicim bayrağı > frontmatter linkedinBicim > varsayılan "makale".
+ * makale = link kartı, siteye tıklama için iyi. gorsel = büyük görsel, erişim için iyi.
+ * Hangisinin daha çok etkileşim aldığı LinkedIn sayfa analitiğinden elle ölçülecek —
+ * etkileşim uç noktaları mevcut scope'larla 403 dönüyor.
  *
  * Sıra önemlidir: LinkedIn postundaki link canlı olmadan post atılmaz.
  */
@@ -18,11 +24,19 @@ import matter from "gray-matter";
 import { haberBul } from "../lib/content";
 import { tokenHazirla } from "../lib/linkedin/token";
 import { gorselYukle, gorseliBekle } from "../lib/linkedin/images";
-import { makalePostuAt } from "../lib/linkedin/client";
+import { makalePostuAt, gorselPostuAt, type PostBicimi } from "../lib/linkedin/client";
 
 const bayrak = (ad: string) => process.argv.includes(`--${ad}`);
 const KURU = bayrak("dry");
 const ATLA_GIT = bayrak("atla-git");
+
+/** Biçim: --bicim gorsel > frontmatter linkedinBicim > varsayılan makale */
+function bicimSec(frontmatterBicim?: PostBicimi): PostBicimi {
+  const i = process.argv.indexOf("--bicim");
+  const bayrakDeger = i > -1 ? process.argv[i + 1] : undefined;
+  if (bayrakDeger === "gorsel" || bayrakDeger === "makale") return bayrakDeger;
+  return frontmatterBicim ?? "makale";
+}
 
 function adim(n: number, metin: string) {
   console.log(`\n[${n}/7] ${metin}`);
@@ -103,8 +117,21 @@ async function main() {
         `    Daha iyisi: "linkedin-postu" skill'i ile kanca metni üretip frontmatter'a ekleyin.`,
     );
   }
+  const bicim = bicimSec(haber.linkedinBicim);
+
+  /*
+   * Görsel postunda link kartı OLUŞMAZ — link metnin içinde olmak zorunda,
+   * yoksa okurun siteye gidecek hiçbir yolu kalmıyor.
+   */
+  if (bicim === "gorsel") {
+    yorum = `${yorum.trimEnd()}\n\n→ ${haberUrl}`;
+  }
+
   if (yorum.length > 2900) dur(`LinkedIn yorumu çok uzun (${yorum.length} karakter, sınır ~3000).`);
   console.log(`  ✓ ${yorum.length} karakter`);
+  console.log(
+    `  · biçim: ${bicim === "gorsel" ? "GÖRSEL postu (tam genişlik, link metinde)" : "MAKALE postu (link kartı)"}`,
+  );
 
   // ---------- 4. Token ----------
   adim(4, "LinkedIn token'ı hazırlanıyor");
@@ -154,15 +181,17 @@ async function main() {
     console.log("  · kuru çalışma — post ATILMADI. Gönderilecek gövde:\n");
     console.log(
       JSON.stringify(
-        {
-          commentary: yorum,
-          article: {
-            source: haberUrl,
-            title: haber.baslik,
-            description: haber.ozet.slice(0, 256),
-            thumbnail: gorselUrn,
-          },
-        },
+        bicim === "gorsel"
+          ? { commentary: yorum, media: { altText: haber.baslik, id: gorselUrn } }
+          : {
+              commentary: yorum,
+              article: {
+                source: haberUrl,
+                title: haber.baslik,
+                description: haber.ozet.slice(0, 256),
+                thumbnail: gorselUrn,
+              },
+            },
         null,
         2,
       ),
@@ -171,14 +200,17 @@ async function main() {
     return;
   }
 
-  const postUrn = await makalePostuAt({
-    yorum,
-    makaleUrl: haberUrl,
-    baslik: haber.baslik,
-    aciklama: haber.ozet.slice(0, 256),
-    gorselUrn,
-  });
-  console.log(`  ✓ yayınlandı: ${postUrn}`);
+  const postUrn =
+    bicim === "gorsel"
+      ? await gorselPostuAt({ yorum, gorselUrn, altMetin: haber.baslik })
+      : await makalePostuAt({
+          yorum,
+          makaleUrl: haberUrl,
+          baslik: haber.baslik,
+          aciklama: haber.ozet.slice(0, 256),
+          gorselUrn,
+        });
+  console.log(`  ✓ yayınlandı (${bicim}): ${postUrn}`);
 
   // ---------- URN'i frontmatter'a yaz ----------
   console.log("\nURN frontmatter'a yazılıyor (çift yayın koruması)");

@@ -104,6 +104,69 @@ export async function yazarUrn(): Promise<string> {
   return hedefTuru() === "organizasyon" ? organizasyonUrn() : kisiUrn();
 }
 
+/**
+ * Post biçimi — ikisi LinkedIn akışında tamamen farklı görünür.
+ *
+ * "makale" : link kartı. Görsel küçük, altında başlık çubuğu, tıklama siteye
+ *            gider. Trafik için iyi, görsel etkisi zayıf.
+ * "gorsel"  : tam genişlikte büyük görsel. Görsel etkisi güçlü, ama link
+ *            metnin içine giriyor ve kart oluşmuyor.
+ *
+ * Hangisinin daha çok etkileşim aldığı ölçülecek. DİKKAT: etkileşim verisi
+ * (socialActions, organizationalEntityShareStatistics) mevcut scope'larla
+ * API'den okunamıyor — ikisi de 403 dönüyor. Karşılaştırma LinkedIn sayfa
+ * analitiğinden elle yapılacak.
+ */
+export type PostBicimi = "makale" | "gorsel";
+
+export type GorselPostu = {
+  yorum: string;
+  gorselUrn: string;
+  altMetin: string;
+};
+
+/** Tam genişlikte görsel postu. Link, metnin içinde yer alır. */
+export async function gorselPostuAt(p: GorselPostu): Promise<string> {
+  const govde = {
+    author: await yazarUrn(),
+    commentary: p.yorum,
+    visibility: "PUBLIC",
+    distribution: {
+      feedDistribution: "MAIN_FEED",
+      targetEntities: [],
+      thirdPartyDistributionChannels: [],
+    },
+    content: {
+      media: {
+        // Ekran okuyucu için; 120 karakterin altı öneriliyor.
+        altText: p.altMetin.slice(0, 300),
+        id: p.gorselUrn,
+      },
+    },
+    lifecycleState: "PUBLISHED",
+    isReshareDisabledByAuthor: false,
+  };
+
+  const yanit = await fetch(`${API_TABAN}/posts`, {
+    method: "POST",
+    headers: await basliklar({ "Content-Type": "application/json" }),
+    body: JSON.stringify(govde),
+  });
+
+  if (!yanit.ok) {
+    throw new LinkedInHatasi(yanit.status, await yanit.text(), "görsel postu oluşturma");
+  }
+
+  const urn = yanit.headers.get("x-restli-id");
+  if (!urn) {
+    throw new Error(
+      "Post oluşturuldu ama x-restli-id başlığı gelmedi — URN kaydedilemedi. " +
+        "Şirket sayfasını elle kontrol edin, çift yayın riski var.",
+    );
+  }
+  return urn;
+}
+
 export type MakalePostu = {
   yorum: string;
   makaleUrl: string;

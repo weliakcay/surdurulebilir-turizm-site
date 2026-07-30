@@ -19,6 +19,8 @@ export type HaberOnBilgi = {
   turkiyeAcisi: boolean;
   /** Yayın sonrası doldurulur. Dolu ise LinkedIn'e tekrar gönderilmez. */
   linkedinPostUrn: string | null;
+  /** LinkedIn post biçimi: "makale" (link kartı) veya "gorsel" (tam genişlikte görsel). */
+  linkedinBicim?: "makale" | "gorsel";
   /** LinkedIn postunun metni. Yoksa özet kullanılır (önerilmez — post kanca olmalı). */
   linkedinYorum?: string;
   /**
@@ -66,6 +68,7 @@ function dogrula(slug: string, veri: Record<string, unknown>): HaberOnBilgi {
     turkiyeAcisi: true,
     linkedinPostUrn: (veri.linkedinPostUrn as string | null) ?? null,
     linkedinYorum: veri.linkedinYorum ? String(veri.linkedinYorum) : undefined,
+    linkedinBicim: veri.linkedinBicim === "gorsel" ? "gorsel" : undefined,
     minyatur: veri.minyatur as HaberOnBilgi["minyatur"],
     taslak: veri.taslak === true,
   };
