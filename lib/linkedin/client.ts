@@ -111,13 +111,15 @@ export async function yazarUrn(): Promise<string> {
  *            gider. Trafik için iyi, görsel etkisi zayıf.
  * "gorsel"  : tam genişlikte büyük görsel. Görsel etkisi güçlü, ama link
  *            metnin içine giriyor ve kart oluşmuyor.
+ * "video"   : otomatik oynayan haber videosu. Akışta en çok yer kaplayan
+ *            biçim; link yine metnin içinde taşınıyor.
  *
  * Hangisinin daha çok etkileşim aldığı ölçülecek. DİKKAT: etkileşim verisi
  * (socialActions, organizationalEntityShareStatistics) mevcut scope'larla
  * API'den okunamıyor — ikisi de 403 dönüyor. Karşılaştırma LinkedIn sayfa
  * analitiğinden elle yapılacak.
  */
-export type PostBicimi = "makale" | "gorsel";
+export type PostBicimi = "makale" | "gorsel" | "video";
 
 export type GorselPostu = {
   yorum: string;
@@ -155,6 +157,59 @@ export async function gorselPostuAt(p: GorselPostu): Promise<string> {
 
   if (!yanit.ok) {
     throw new LinkedInHatasi(yanit.status, await yanit.text(), "görsel postu oluşturma");
+  }
+
+  const urn = yanit.headers.get("x-restli-id");
+  if (!urn) {
+    throw new Error(
+      "Post oluşturuldu ama x-restli-id başlığı gelmedi — URN kaydedilemedi. " +
+        "Şirket sayfasını elle kontrol edin, çift yayın riski var.",
+    );
+  }
+  return urn;
+}
+
+export type VideoPostu = {
+  yorum: string;
+  videoUrn: string;
+  /** Akışta videonun üstünde görünen ad. Boş bırakılamaz. */
+  baslik: string;
+};
+
+/**
+ * Tam genişlikte video postu.
+ *
+ * Görsel postundan tek farkı `content.media.id`'nin video URN'i olması ve
+ * `title`ın zorunlu olması. Link kartı OLUŞMAZ — link metnin içinde olmalı.
+ */
+export async function videoPostuAt(p: VideoPostu): Promise<string> {
+  const govde = {
+    author: await yazarUrn(),
+    commentary: p.yorum,
+    visibility: "PUBLIC",
+    distribution: {
+      feedDistribution: "MAIN_FEED",
+      targetEntities: [],
+      thirdPartyDistributionChannels: [],
+    },
+    content: {
+      media: {
+        title: p.baslik.slice(0, 400),
+        id: p.videoUrn,
+      },
+    },
+    lifecycleState: "PUBLISHED",
+    isReshareDisabledByAuthor: false,
+  };
+
+  const yanit = await fetch(`${API_TABAN}/posts`, {
+    method: "POST",
+    headers: await basliklar({ "Content-Type": "application/json" }),
+    body: JSON.stringify(govde),
+  });
+
+  if (!yanit.ok) {
+    throw new LinkedInHatasi(yanit.status, await yanit.text(), "video postu oluşturma");
   }
 
   const urn = yanit.headers.get("x-restli-id");

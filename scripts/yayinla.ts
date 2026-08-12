@@ -24,19 +24,33 @@ import matter from "gray-matter";
 import { haberBul } from "../lib/content";
 import { tokenHazirla } from "../lib/linkedin/token";
 import { gorselYukle, gorseliBekle } from "../lib/linkedin/images";
-import { makalePostuAt, gorselPostuAt, type PostBicimi } from "../lib/linkedin/client";
+import { videoYukle, videoyuBekle } from "../lib/linkedin/videos";
+import {
+  makalePostuAt,
+  gorselPostuAt,
+  videoPostuAt,
+  type PostBicimi,
+} from "../lib/linkedin/client";
 
 const bayrak = (ad: string) => process.argv.includes(`--${ad}`);
 const KURU = bayrak("dry");
 const ATLA_GIT = bayrak("atla-git");
 
-/** Biçim: --bicim gorsel > frontmatter linkedinBicim > varsayılan makale */
+/** Biçim: --bicim <deger> > frontmatter linkedinBicim > varsayılan makale */
 function bicimSec(frontmatterBicim?: PostBicimi): PostBicimi {
   const i = process.argv.indexOf("--bicim");
   const bayrakDeger = i > -1 ? process.argv[i + 1] : undefined;
-  if (bayrakDeger === "gorsel" || bayrakDeger === "makale") return bayrakDeger;
+  if (bayrakDeger === "gorsel" || bayrakDeger === "makale" || bayrakDeger === "video") {
+    return bayrakDeger;
+  }
   return frontmatterBicim ?? "makale";
 }
+
+const BICIM_ADI: Record<PostBicimi, string> = {
+  makale: "MAKALE postu (link kartı)",
+  gorsel: "GÖRSEL postu (tam genişlik, link metinde)",
+  video: "VİDEO postu (otomatik oynar, link metinde)",
+};
 
 function adim(n: number, metin: string) {
   console.log(`\n[${n}/7] ${metin}`);
@@ -120,18 +134,27 @@ async function main() {
   const bicim = bicimSec(haber.linkedinBicim);
 
   /*
-   * Görsel postunda link kartı OLUŞMAZ — link metnin içinde olmak zorunda,
-   * yoksa okurun siteye gidecek hiçbir yolu kalmıyor.
+   * Görsel ve video postunda link kartı OLUŞMAZ — link metnin içinde olmak
+   * zorunda, yoksa okurun siteye gidecek hiçbir yolu kalmıyor.
    */
-  if (bicim === "gorsel") {
+  if (bicim === "gorsel" || bicim === "video") {
     yorum = `${yorum.trimEnd()}\n\n→ ${haberUrl}`;
   }
 
   if (yorum.length > 2900) dur(`LinkedIn yorumu çok uzun (${yorum.length} karakter, sınır ~3000).`);
   console.log(`  ✓ ${yorum.length} karakter`);
-  console.log(
-    `  · biçim: ${bicim === "gorsel" ? "GÖRSEL postu (tam genişlik, link metinde)" : "MAKALE postu (link kartı)"}`,
-  );
+  console.log(`  · biçim: ${BICIM_ADI[bicim]}`);
+
+  // Video biçiminde dosya yayına başlamadan ÖNCE aranır — git adımına
+  // girip dosyanın olmadığını sonradan görmek en kötü sıra.
+  const videoYolu = haber.video ?? `/haberler/${slug}.mp4`;
+  if (bicim === "video") {
+    const tam = path.join(process.cwd(), "public", videoYolu.replace(/^\//, ""));
+    if (!fs.existsSync(tam)) {
+      dur(`Video bulunamadı: ${tam}\n  Önce: npm run video ${slug}`);
+    }
+    console.log(`  · video: ${videoYolu} (${(fs.statSync(tam).size / 1024 / 1024).toFixed(1)} MB)`);
+  }
 
   // ---------- 4. Token ----------
   adim(4, "LinkedIn token'ı hazırlanıyor");
@@ -164,11 +187,16 @@ async function main() {
     await canliyaCikmayiBekle(haberUrl);
   }
 
-  // ---------- 6. Görseli LinkedIn'e yükle ----------
-  adim(6, "Görsel LinkedIn'e yükleniyor");
+  // ---------- 6. Medyayı LinkedIn'e yükle ----------
+  adim(6, bicim === "video" ? "Video LinkedIn'e yükleniyor" : "Görsel LinkedIn'e yükleniyor");
   let gorselUrn = "urn:li:image:KURU_CALISMA";
+  let videoUrn = "urn:li:video:KURU_CALISMA";
   if (KURU) {
-    console.log(`  · kuru çalışma — ${haber.gorsel} yüklenmedi`);
+    console.log(`  · kuru çalışma — ${bicim === "video" ? videoYolu : haber.gorsel} yüklenmedi`);
+  } else if (bicim === "video") {
+    videoUrn = await videoYukle(videoYolu);
+    console.log(`  ✓ ${videoUrn}`);
+    await videoyuBekle(videoUrn);
   } else {
     gorselUrn = await gorselYukle(haber.gorsel);
     console.log(`  ✓ ${gorselUrn}`);
@@ -181,7 +209,9 @@ async function main() {
     console.log("  · kuru çalışma — post ATILMADI. Gönderilecek gövde:\n");
     console.log(
       JSON.stringify(
-        bicim === "gorsel"
+        bicim === "video"
+          ? { commentary: yorum, media: { title: haber.baslik, id: videoUrn } }
+          : bicim === "gorsel"
           ? { commentary: yorum, media: { altText: haber.baslik, id: gorselUrn } }
           : {
               commentary: yorum,
@@ -201,7 +231,9 @@ async function main() {
   }
 
   const postUrn =
-    bicim === "gorsel"
+    bicim === "video"
+      ? await videoPostuAt({ yorum, videoUrn, baslik: haber.baslik })
+      : bicim === "gorsel"
       ? await gorselPostuAt({ yorum, gorselUrn, altMetin: haber.baslik })
       : await makalePostuAt({
           yorum,
