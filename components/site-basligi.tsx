@@ -1,40 +1,59 @@
+"use client";
+
 import Link from "next/link";
-import { site } from "@/lib/site";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
 
+const pages = [
+  ["Greenlog", "/greenlog"],
+  ["COP31", "/cop31"],
+  ["Haberler", "/haberler"],
+  ["Topluluk", "/topluluk"],
+  ["Hakkımızda", "/hakkinda"],
+];
 export function SiteBasligi() {
+  const pathname = usePathname();
+  const [open, setOpen] = useState(false);
   return (
-    <header className="relative z-20 border-b border-cizgi bg-krem">
-      <div className="mx-auto grid max-w-6xl grid-cols-[1fr_auto_1fr] items-center gap-4 px-5 py-4 md:px-10">
-        <nav aria-label="Bölümler" className="etiket flex gap-4 text-solgun">
-          <Link href="/isletme" className="hover:text-cam">
-            İşletmeyim
+    <div className="portal">
+      <header>
+        <div className="wrap nav">
+          <Link className="wordmark" href="/" onClick={() => setOpen(false)}>
+            Sürdürülebilir<span>Turizm.</span>
           </Link>
-          <Link href="/gezgin" className="hidden hover:text-terra sm:inline">
-            Gezginim
-          </Link>
-        </nav>
-
-        <Link href="/" className="whitespace-nowrap text-center text-lg tracking-tight">
-          Sürdürülebilir&nbsp;Turizm
-        </Link>
-
-        <div className="flex items-center justify-end gap-3">
-          <Link
-            href="/araclar/karbon-ayak-izi"
-            className="etiket rounded-sm bg-cam px-3.5 py-2 text-krem transition-opacity hover:opacity-90"
+          <button
+            className="menu-toggle"
+            aria-expanded={open}
+            aria-controls="site-navigation"
+            onClick={() => setOpen(!open)}
           >
-            Ayak izini ölç
-          </Link>
-          <a
-            href={site.linkedin}
-            target="_blank"
-            rel="noreferrer"
-            className="etiket hidden text-solgun hover:text-cam md:inline"
+            {open ? "Menüyü kapat" : "Menü"}
+          </button>
+          <nav
+            id="site-navigation"
+            aria-label="Ana menü"
+            className={open ? "open" : undefined}
           >
-            LinkedIn
-          </a>
+            {pages.map(([label, href]) => (
+              <Link
+                key={href}
+                href={href}
+                aria-current={
+                  pathname === href || pathname.startsWith(`${href}/`)
+                    ? "page"
+                    : undefined
+                }
+                onClick={() => setOpen(false)}
+              >
+                {label}
+              </Link>
+            ))}
+          </nav>
+          <Link className="btn" href="/greenlog/nasil-calisir">
+            Greenlog nasıl çalışır?
+          </Link>
         </div>
-      </div>
-    </header>
+      </header>
+    </div>
   );
 }

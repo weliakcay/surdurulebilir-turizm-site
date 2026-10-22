@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Newsreader, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import "./portal.css";
 import { site } from "@/lib/site";
 import { SiteBasligi } from "@/components/site-basligi";
 import { SiteAltligi } from "@/components/site-altligi";
@@ -25,7 +26,7 @@ const mono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: `${site.ad} — dünyada işe yarayan uygulamalar, Türkiye'de karşılığı`,
+    default: `${site.ad} — haberler, topluluk ve Greenlog`,
     template: `%s · ${site.ad}`,
   },
   description: site.aciklama,
@@ -38,6 +39,7 @@ export const metadata: Metadata = {
     url: site.url,
   },
   twitter: { card: "summary_large_image" },
+  robots: { index: true, follow: true, googleBot: { "max-image-preview": "large" } },
   alternates: { canonical: "/" },
 };
 

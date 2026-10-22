@@ -30,6 +30,10 @@ export default function Iletisim() {
           </a>
         </p>
 
+        <h2>Greenlog pilot görüşmesi</h2>
+        <p>İşletmenin adını, denemek istediğiniz kontrol noktalarını ve mevcut form türlerini belirterek yazabilirsiniz. Pilotun kapsamını ve koşullarını görüşmede netleştiririz.</p>
+        <p><a href="/greenlog/pilot">Pilot yöntemi ve ölçülecekler</a></p>
+        <p>E-posta bağlantısı kendi e-posta uygulamanızı açar; mesajı oradan göndermeniz gerekir. LinkedIn sayfamızdan da ulaşabilirsiniz.</p>
         <h2>Haber önerirken</h2>
         <p>Şunları eklerseniz değerlendirmemiz hızlanır:</p>
         <ul>

@@ -35,6 +35,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: haber.ozet,
       url: `${site.url}/haber/${haber.slug}`,
       publishedTime: haber.tarih,
+      modifiedTime: haber.guncellenme ?? haber.tarih,
       images: [{ url: haber.gorsel, width: 1200, height: 630, alt: haber.baslik }],
     },
     twitter: {
@@ -63,7 +64,8 @@ export default async function HaberSayfasi({ params }: Props) {
     description: haber.ozet,
     image: [`${site.url}${haber.gorsel}`],
     datePublished: haber.tarih,
-    dateModified: haber.tarih,
+    dateModified: haber.guncellenme ?? haber.tarih,
+    author: { "@type": "Organization", name: "Sürdürülebilir Turizm editörlüğü", url: `${site.url}/hakkinda` },
     inLanguage: "tr-TR",
     articleSection: haber.kategori,
     keywords: haber.etiketler.join(", "),
@@ -93,6 +95,7 @@ export default async function HaberSayfasi({ params }: Props) {
             <span>{haber.okumaSuresi} dk okuma</span>
           </div>
 
+          <p className="mt-3 text-sm text-solgun"><Link href="/hakkinda">Sürdürülebilir Turizm editörlüğü</Link>{haber.guncellenme && <> · Güncelleme: <time dateTime={haber.guncellenme}>{tarihFormatla(haber.guncellenme)}</time></>}</p>
           <h1 className="mt-3.5 text-[2rem] leading-[1.05] tracking-tight md:text-[3.1rem]">
             {haber.baslik}
           </h1>

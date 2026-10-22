@@ -20,7 +20,7 @@ export const site = {
   ad: "Sürdürülebilir Turizm",
   kisaAd: "Sürdürülebilir Turizm",
   aciklama:
-    "Dünyadan sürdürülebilir turizm uygulamaları ve Türkiye'de nasıl hayata geçirilebilecekleri. Öncü işletmeler, mevzuat ve veriler.",
+    "Kaynaklı sürdürülebilir turizm haberleri, COP31 Antalya dosyası ve otellerde günlük kontrol kayıtlarını dijitale taşıyan Greenlog.",
   url: siteUrl(),
   dil: "tr-TR",
   linkedin: "https://www.linkedin.com/company/surdurulebilir-turizm/",

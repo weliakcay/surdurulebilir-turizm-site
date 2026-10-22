@@ -15,6 +15,7 @@ export type HaberOnBilgi = {
   kaynak: Kaynak | Kaynak[];
   gorsel: string;
   tarih: string;
+  guncellenme?: string;
   /** "Türkiye açısı" bölümü var mı — editoryal ilkeler madde 3 gereği zorunlu */
   turkiyeAcisi: boolean;
   /** Yayın sonrası doldurulur. Dolu ise LinkedIn'e tekrar gönderilmez. */
@@ -71,6 +72,7 @@ function dogrula(slug: string, veri: Record<string, unknown>): HaberOnBilgi {
     kaynak: veri.kaynak as Kaynak | Kaynak[],
     gorsel: String(veri.gorsel),
     tarih: new Date(veri.tarih as string).toISOString(),
+    guncellenme: veri.guncellenme ? new Date(veri.guncellenme as string).toISOString() : undefined,
     turkiyeAcisi: true,
     linkedinPostUrn: (veri.linkedinPostUrn as string | null) ?? null,
     linkedinYorum: veri.linkedinYorum ? String(veri.linkedinYorum) : undefined,

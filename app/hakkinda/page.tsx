@@ -67,6 +67,10 @@ export default function Hakkinda() {
           </li>
         </ul>
 
+        <h2>Yayın, topluluk ve Greenlog</h2>
+        <p>Sürdürülebilir Turizm aynı zamanda turizm profesyonellerinin uygulama deneyimlerini konuşabildiği bir topluluk oluşturmayı hedefliyor.</p>
+        <p>Greenlog, aynı oluşum kapsamında geliştirdiğimiz dijital kontrol formu ürünüdür. Kendi ürünümüzle ilgili anlatımları editoryal haberlerden açıkça ayırıyoruz. Ölçülmemiş tasarruf veya çevresel sonuçları ürün özelliği gibi sunmuyoruz.</p>
+        <p><a href="/greenlog">Greenlog’u incele</a> · <a href="/topluluk">Topluluğu tanı</a> · <a href="/yayin-ilkeleri">Yayın ilkelerini oku</a></p>
         <h2>İletişim</h2>
         <p>
           Bir haber önerisi, düzeltme talebi veya işbirliği için{" "}

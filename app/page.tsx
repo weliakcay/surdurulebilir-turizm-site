@@ -1,158 +1,134 @@
+import Image from "next/image";
 import Link from "next/link";
-import { tumHaberler, kategoriler } from "@/lib/content";
-import { HaberKarti, MansetKarti, AracKarti } from "@/components/haber-karti";
-import { Kapilar } from "@/components/kapilar";
-import { Hareket } from "@/components/hareket";
-import { SahneZoom, SahneCizim, SahneSerit } from "@/components/sahneler";
-
-export default function AnaSayfa() {
-  const haberler = tumHaberler();
-  const [manset, ...digerleri] = haberler;
-  const kats = kategoriler();
-
+import { tumHaberler } from "@/lib/content";
+import { Portal, NewsGrid } from "@/components/portal";
+import { pageMetadata } from "@/lib/portal";
+export const metadata = pageMetadata(
+  "Sürdürülebilir Turizm: haberler, topluluk ve Greenlog",
+  "Kaynaklı turizm haberleri, COP31 Antalya dosyası ve otellerin günlük kontrol formlarını dijitale taşıyan Greenlog.",
+  "/",
+);
+export default function Home() {
   return (
-    <>
-      <Hareket />
-
-      {/* ── Sahne 01 — açılış ── */}
-      <SahneZoom
-        varisGorseli="/site/hero-varis.jpg"
-        fonGorseli="/site/hero-fon.jpg"
-        baslik={
-          <span className="text-3xl leading-none tracking-tight md:text-5xl">
-            Sürdürülebilir
-            <br />
-            Turizm
-          </span>
-        }
-      />
-
-      {/* ── Perde — iki kapı ── */}
-      <Kapilar />
-
-      {/* ── Manşet ── */}
-      {manset ? (
-        <section className="relative border-b border-cizgi">
-          <div className="izgara" />
-          <div className="relative mx-auto max-w-6xl px-5 py-14 md:px-10 md:py-16">
-            <MansetKarti haber={manset} />
-          </div>
-        </section>
-      ) : (
-        <section className="relative border-b border-cizgi">
-          <div className="mx-auto max-w-6xl px-5 py-20 md:px-10">
-            <p className="text-solgun">
-              Henüz haber yayınlanmadı. İlk haberler <code>content/haberler/</code> altına eklenecek.
+    <Portal>
+      <section className="hero">
+        <div className="wrap hero-grid">
+          <div>
+            <div className="product">
+              <span className="glyph" aria-hidden="true">
+                g
+              </span>
+              Greenlog
+            </div>
+            <h1>Otelde her kontrolün kaydı, tek yerde.</h1>
+            <p>
+              Tekrarlanan kontrol formlarını dijitale taşı. Ekibin QR’dan
+              kaydını oluştursun, geçmiş kontroller ihtiyaç duyduğunda elinin
+              altında olsun.
+            </p>
+            <div className="links">
+              <Link className="btn" href="/greenlog">
+                Greenlog’u incele
+              </Link>
+              <Link className="textlink" href="/greenlog/nasil-calisir">
+                Nasıl çalıştığını gör
+              </Link>
+            </div>
+            <p className="tiny" style={{ marginTop: 25, fontSize: 13 }}>
+              Sürdürülebilir Turizm oluşumu kapsamında geliştiriyoruz.
             </p>
           </div>
-        </section>
-      )}
-
-      {/* ── Sahne 03 — çizim, dolgu, renk devri ── */}
-      <SahneCizim
-        etiket="01 — Gri su geri kazanımı"
-        cumle={
-          <>
-            Dünyada işe yarayan bir uygulama,
-            <br />
-            Türkiye'de hangi koşullarda işler?
-          </>
-        }
-      />
-
-      {/* ── Sahne 05 — araç şeridi ── */}
-      <SahneSerit
-        ust={
-          <>
-            <div className="etiket flex items-center gap-2.5 text-terra">
-              <span>Araçlar</span>
-              <span className="h-px max-w-[70px] flex-1 bg-current opacity-30" />
-            </div>
-            <h2 className="mt-3 max-w-[20ch] text-3xl leading-none tracking-tight md:text-[2.6rem]">
-              Okumakla kalma, kendi sayını gör
-            </h2>
-          </>
-        }
-      >
-        <AracKarti
-          etiket="Gezgin · araç"
-          baslik="Seyahatinin karbon ayak izi"
-          metin="Dört soru, bir not. DEFRA 2026 katsayılarıyla."
-          href="/araclar/karbon-ayak-izi"
-          tipi="kadran"
-          not="C"
-        />
-        <AracKarti
-          etiket="İşletme · araç"
-          baslik="Sertifikaya ne kadar yakınsın?"
-          metin="12 maddelik tarama; puanın ve en hızlı kazancın."
-          href="/araclar/sertifika-taramasi"
-          tipi="cubuklar"
-        />
-        <AracKarti
-          etiket="Haberin içinde"
-          baslik="Bu uygulama bende işler mi?"
-          metin="Tesisinin rakamlarını gir, geri ödeme süresini gör."
-          href={manset ? `/haber/${manset.slug}` : "/isletme"}
-          tipi="egri"
-        />
-        <AracKarti
-          etiket="İşletme · bölüm"
-          baslik="İşletme tarafına geç"
-          metin="Mevzuat, maliyet ve uygulama odaklı her şey bir arada."
-          href="/isletme"
-          tipi="halka"
-        />
-        <AracKarti
-          etiket="Gezgin · bölüm"
-          baslik="Gezgin tarafına geç"
-          metin="Ayak izini ölç, seyahatini bırakmadan hafiflet."
-          href="/gezgin"
-          tipi="kadran"
-          not="B"
-        />
-      </SahneSerit>
-
-      {/* ── Son haberler ── */}
-      {digerleri.length > 0 && (
-        <section className="relative border-t border-cizgi">
-          <div className="izgara" />
-          <div className="relative mx-auto max-w-6xl px-5 py-14 md:px-10">
-            <div className="etiket flex items-center gap-2.5 text-terra">
-              <span>Son haberler</span>
-              <span className="h-px max-w-[70px] flex-1 bg-current opacity-30" />
-            </div>
-            <div className="mt-9 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
-              {digerleri.map((h) => (
-                <div key={h.slug} className="gir">
-                  <HaberKarti haber={h} />
-                </div>
-              ))}
+          <div className="hero-media">
+            <Image
+              src="/site/kapi-isletme.jpg"
+              alt="Otel operasyon alanında kontrol yapan çalışanları gösteren temsili görsel"
+              width={1200}
+              height={630}
+              sizes="(max-width:700px) 100vw, 50vw"
+              priority
+            />
+            <span className="photo-note">Temsili saha görseli</span>
+            <div className="record">
+              <div className="record-top">
+                <span>Greenlog / Kontrol kaydı</span>
+                <span className="pill">Örnek arayüz</span>
+              </div>
+              <h3>Soğuk oda kontrolü</h3>
+              <div className="record-line">
+                <span>Nokta</span>
+                <strong>Mutfak · Soğuk oda A</strong>
+              </div>
+              <div className="record-line">
+                <span>Kontrol zamanı</span>
+                <strong>10.00</strong>
+              </div>
+              <div className="record-line">
+                <span>Durum</span>
+                <strong>Kayıt oluşturuldu</strong>
+              </div>
+              <p className="tiny" style={{ margin: "9px 0 0" }}>
+                Temsili veridir; gerçek bir otel kaydı değildir.
+              </p>
             </div>
           </div>
-        </section>
-      )}
-
-      {/* ── Konular ── */}
-      {kats.length > 0 && (
-        <section className="relative border-t border-cizgi">
-          <div className="relative mx-auto max-w-6xl px-5 py-11 md:px-10">
-            <div className="etiket text-solgun">Konular</div>
-            <div className="mt-4 flex flex-wrap gap-2.5">
-              {kats.map((k) => (
-                <Link
-                  key={k.slug}
-                  href={`/kategori/${k.slug}`}
-                  className="rounded-full border border-cizgi px-4 py-1.5 text-sm text-solgun transition-colors hover:border-terra hover:text-cam"
-                >
-                  {k.ad}
-                  <span className="ml-1.5 text-xs opacity-60">{k.adet}</span>
-                </Link>
-              ))}
-            </div>
+        </div>
+      </section>
+      <div className="trustline">
+        <div className="wrap">
+          <span>Metin ve dosyalardan form taslağı</span>
+          <span>QR ile giriş ve yönetici onayı</span>
+          <span>Geçmiş kayıtlar ve raporlama</span>
+        </div>
+      </div>
+      <section className="section">
+        <div className="wrap cop-teaser">
+          <div>
+            <div className="tag">COP31 turizm dosyası</div>
+            <h2>Antalya’da konuşulanlar, sahada neye dönüşür?</h2>
+            <p>
+              Turizm açısından gündemi, uygulanabilir soruları ve günlük işlerin
+              kayıt düzenini birlikte ele alıyoruz.
+            </p>
+            <Link className="textlink" href="/cop31">
+              COP31 dosyasına geç
+            </Link>
           </div>
-        </section>
-      )}
-    </>
+          <div className="cop-date">
+            9–20 Kasım 2026<span>Antalya · Tarih kaynağı: UNFCCC</span>
+            <p style={{ font: "14px/1.6 Arial", marginTop: 20 }}>
+              Bağımsız editoryal dosya. Resmî ortaklık veya konferansa katılım
+              iddiası içermez.
+            </p>
+          </div>
+        </div>
+      </section>
+      <section className="section pale">
+        <div className="wrap">
+          <div className="section-top">
+            <h2>Haberin ötesinde, Türkiye’de karşılığı.</h2>
+            <Link className="textlink" href="/haberler">
+              Haber arşivine bak
+            </Link>
+          </div>
+          <NewsGrid items={tumHaberler().slice(0, 3)} />
+        </div>
+      </section>
+      <section className="section">
+        <div className="wrap question">
+          <div>
+            <h2>Bir kontrol yapıldı. Kaydı sonra kaç dakikada bulunuyor?</h2>
+          </div>
+          <div>
+            <p>
+              Operasyon ekiplerinin gerçek deneyimlerinden öğrenmek istiyoruz.
+              Soru ve deneyimlerini topluluğa taşı.
+            </p>
+            <Link className="btn lime" href="/topluluk">
+              Topluluğu tanı
+            </Link>
+          </div>
+        </div>
+      </section>
+    </Portal>
   );
 }
