@@ -1,5 +1,8 @@
+import { PhoneDemo } from "@/components/phone-demo";
+import { OperationsStory } from "@/components/operations-story";
+import { HotelModel } from "@/components/hotel-model";
 import Link from "next/link";
-import { Portal, Heading, ProductScreen, PilotCta } from "@/components/portal";
+import { Portal, Heading, PilotCta } from "@/components/portal";
 import { GREENLOG_URL, pageMetadata } from "@/lib/portal";
 export const metadata = pageMetadata(
   "Greenlog: Oteller İçin Dijital Kontrol Formları",
@@ -14,7 +17,7 @@ export default function Greenlog() {
         description="Mutfaktan havuza, soğuk odadan kontrol noktasına: tekrarlanan formları dijital bir kayıt düzenine taşı."
       />
       <section className="section">
-        <div className="wrap split">
+        <div className="wrap product-intro">
           <div>
             <div className="product">
               <span className="glyph" aria-hidden="true">
@@ -42,7 +45,7 @@ export default function Greenlog() {
               </a>
             </div>
           </div>
-          <ProductScreen />
+          <PhoneDemo />
         </div>
       </section>
       <section className="section pale">
@@ -103,6 +106,8 @@ export default function Greenlog() {
           </div>
         </div>
       </section>
+      <OperationsStory />
+      <HotelModel />
       <PilotCta />
       <section className="section small">
         <div className="wrap disclosure">

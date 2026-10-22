@@ -1,5 +1,7 @@
 "use client";
 import { useRef, useState } from "react";
+import Image from "next/image";
+import { PhoneDemo } from "./phone-demo";
 const steps = [
   {
     label: "Formu hazırla",
@@ -7,11 +9,6 @@ const steps = [
     paragraphs: [
       "Yazı halindeki formunu yapıştır veya desteklenen dosyalarını yükle. AI ile oluşan taslağın maddelerini, alan türlerini ve seçeneklerini gözden geçir.",
       "Formu kontrol noktasına bağlayarak ekibin kullanacağı düzeni oluştur.",
-    ],
-    rows: [
-      ["Kontrol noktası", "Soğuk oda A"],
-      ["Form maddeleri", "Kontrol zamanı · Değer · Açıklama"],
-      ["Gözden geçirme", "AI taslağı, kullanıcı kontrolünün yerini almaz."],
     ],
   },
   {
@@ -21,11 +18,6 @@ const steps = [
       "Personel noktanın QR’ını okutur. Hesabı varsa giriş yapar; yetkisi yoksa kontrol noktası bilgisiyle yönetici onayı ister.",
       "Başka oteldeki mevcut hesap kullanılabilir. Yeni otelde erişim, hedef otelin yöneticisi onaylayınca açılır.",
     ],
-    rows: [
-      ["Otel · Mutfak · Soğuk oda A", "Kontrol noktası bilgisi"],
-      ["Erişim onayı iste", "Talep hedef otelin yöneticisine gider."],
-      ["Başka hesapla giriş yap", "Paylaşılan telefon için hesap değişimi."],
-    ],
   },
   {
     label: "Geçmişi incele",
@@ -33,11 +25,6 @@ const steps = [
     paragraphs: [
       "Tarih, kontrol noktası ve forma bağlı kayıtları bul. Yönetici geçmişi inceleyebilir ve raporlama akışını kullanabilir.",
       "Pilotta aynı kaydı bulmak için gereken süreyi mevcut yöntemle karşılaştırabiliriz.",
-    ],
-    rows: [
-      ["Kontrol noktası", "Mutfak · Soğuk oda A"],
-      ["Kayıt bilgisi", "Form · Kullanıcı · Zaman · Yanıtlar"],
-      ["Raporlama", "İlgili dönemin kayıtlarını incele"],
     ],
   },
 ];
@@ -101,18 +88,31 @@ export function ProductFlow() {
               <p key={p}>{p}</p>
             ))}
           </div>
-          <div className="screen">
-            <div className="screenbar">
-              <strong>Greenlog / Örnek iş akışı</strong>
-              <span>Temsili ekran</span>
+          {i === 1 ? (
+            <PhoneDemo />
+          ) : i === 2 ? (
+            <figure className="dashboard-frame">
+              <Image
+                src="/greenlog/screens/dashboard.webp"
+                alt="Greenlog gerçek grafik ekranı, gösterim verileri"
+                width={2200}
+                height={1600}
+              />
+              <figcaption className="tiny">
+                Gerçek uygulama bileşenleri · Gösterim verisi
+              </figcaption>
+            </figure>
+          ) : (
+            <div className="form-map">
+              <span>Metin / dosyalar</span>
+              <b aria-hidden="true">↓</b>
+              <span>AI ile form taslağı</span>
+              <b aria-hidden="true">↓</b>
+              <span>Maddeleri gözden geçir</span>
+              <b aria-hidden="true">↓</b>
+              <span>Kontrol noktasına bağla</span>
             </div>
-            {s.rows.map(([label, value]) => (
-              <div className="screen-row" key={label}>
-                <strong>{label}</strong>
-                {value}
-              </div>
-            ))}
-          </div>
+          )}
         </div>
       ))}
     </>

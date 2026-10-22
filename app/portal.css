@@ -1025,3 +1025,356 @@
     font-size: 12px;
   }
 }
+
+/* Greenlog product showcase: real UI, connected operational context. */
+.portal .demo-label {
+  font:
+    600 14px/1.5 Arial,
+    sans-serif;
+  color: #245f56;
+  margin-bottom: 16px;
+}
+.portal .hero-grid {
+  grid-template-columns: 1fr 1.1fr;
+  align-items: center;
+}
+.portal .phone-demo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 1fr);
+  gap: 32px;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+}
+.portal .hero .phone-demo {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 12px;
+}
+.portal .hero .phone-copy h2,
+.portal .hero .phone-copy > p:not(.tiny) {
+  display: none;
+}
+.portal .hero .phone-copy .demo-label {
+  display: block;
+  font-size: 13px;
+  margin: 0 0 10px;
+}
+.portal .hero .phone-copy {
+  text-align: center;
+}
+.portal .hero .phone-copy .tiny {
+  font-size: 11px;
+  margin-top: 10px;
+}
+.portal .phone-stage {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding: 24px 20px;
+  background: #d8efee;
+  border-radius: 50% 50% 24px 24px;
+  isolation: isolate;
+}
+
+.portal .phone-shell {
+  width: 284px;
+  border: 7px solid #172f31;
+  border-radius: 36px;
+  padding: 6px;
+  background: #172f31;
+  box-shadow: 18px 25px 0 #1e3d3415;
+  position: relative;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.portal .phone-speaker {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #172f31;
+  width: 78px;
+  height: 16px;
+  border-radius: 0 0 12px 12px;
+  z-index: 2;
+}
+.portal .phone-viewport {
+  height: 560px;
+  overflow: auto;
+  border-radius: 23px;
+  background: #fff;
+  scrollbar-width: thin;
+}
+.portal .phone-viewport img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+}
+.portal .orbit-label {
+  position: absolute;
+  z-index: 3;
+  background: #fff;
+  padding: 9px 13px;
+  border-radius: 8px;
+  font: 600 12px Arial;
+  color: #20453d;
+  box-shadow: 0 5px 20px #20453d14;
+}
+.portal .orbit-one {
+  top: 14%;
+  left: -8px;
+  transform: rotate(-5deg);
+}
+.portal .orbit-two {
+  bottom: 15%;
+  right: -8px;
+  transform: rotate(5deg);
+  background: #e5efb8;
+}
+.portal .demo-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.portal .hero .demo-controls {
+  justify-content: center;
+}
+.portal .demo-controls button,
+.portal .department-controls button {
+  font: 600 14px/1.4 Arial;
+  padding: 12px 16px;
+  border: 1px solid #93b5ac;
+  background: #fff;
+  color: #204b42;
+  border-radius: 30px;
+  cursor: pointer;
+}
+.portal .demo-controls button[aria-pressed="true"],
+.portal .department-controls button[aria-pressed="true"] {
+  background: #204b42;
+  color: white;
+  border-color: #204b42;
+}
+.portal button:focus-visible {
+  outline: 3px solid #2669be;
+  outline-offset: 4px;
+}
+.portal .product-intro > .phone-demo {
+  margin-top: 65px;
+}
+.portal .operations-story {
+  background: #edf5f5;
+}
+.portal .ops-ribbon {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin: 32px 0;
+  border-radius: 18px;
+  overflow: hidden;
+}
+.portal .ops-ribbon > div {
+  padding: 24px;
+  background: #c8e9d9;
+  color: #173d32;
+}
+.portal .ops-ribbon > div:nth-child(2) {
+  background: #c9e8f6;
+  color: #183e52;
+}
+.portal .ops-ribbon > div:nth-child(3) {
+  background: #f5dc95;
+  color: #59410b;
+}
+.portal .ops-ribbon > div:nth-child(4) {
+  background: #f5b8ad;
+  color: #632b23;
+}
+.portal .ops-ribbon b {
+  display: block;
+  font:
+    500 30px/1.2 var(--font-newsreader),
+    Georgia,
+    serif;
+  margin-bottom: 10px;
+}
+.portal .ops-ribbon span {
+  font: 14px/1.6 Arial;
+}
+.portal .dashboard-frame {
+  overflow: hidden;
+  border: 1px solid #c0d6d0;
+  background: white;
+  border-radius: 16px;
+  margin: 0;
+  box-shadow: 0 18px 45px #224b4010;
+}
+.portal .dashboard-frame img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.portal .dashboard-caption {
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  background: #204b42;
+  color: #fff;
+  font: 13px/1.5 Arial;
+}
+.portal .dashboard-caption span {
+  color: #d2e8df;
+}
+.portal .insight-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 36px;
+  margin: 44px 0 24px;
+}
+.portal .insight-grid article {
+  border-top: 3px solid #3a9c8d;
+  padding-top: 22px;
+}
+.portal .insight-grid article:nth-child(2) {
+  border-color: #4d82c7;
+}
+.portal .insight-grid article:nth-child(3) {
+  border-color: #c28b24;
+}
+.portal .insight-icon {
+  display: inline-block;
+  font: 36px Arial;
+  color: #245f56;
+  margin-bottom: 12px;
+}
+.portal .hotel-section {
+  background: #e7efe9;
+}
+.portal .hotel-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: 40px;
+  align-items: center;
+}
+.portal .hotel-canvas {
+  height: 440px;
+  width: 100%;
+  border-radius: 24px;
+  background: #d6e8e0;
+  overflow: hidden;
+  touch-action: pan-y;
+}
+.portal .hotel-canvas canvas {
+  display: block;
+  touch-action: pan-y;
+}
+.portal .department-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 24px 0;
+}
+.portal .department-controls button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.portal .department-controls button span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.portal .department-detail {
+  border-left: 3px solid #359e89;
+  padding-left: 20px;
+  min-height: 140px;
+}
+.portal .analytics-next {
+  background: #f6edcf;
+}
+.portal .form-map {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 35px;
+  background: #def0e7;
+  border-radius: 20px;
+}
+.portal .form-map span {
+  padding: 16px 24px;
+  border-radius: 12px;
+  background: white;
+  min-width: 220px;
+  text-align: center;
+  color: #204b42;
+}
+@media (max-width: 1000px) {
+  .portal .phone-demo {
+    gap: 20px;
+  }
+  .portal .orbit-label {
+    font-size: 11px;
+    padding: 7px;
+  }
+  .portal .hero-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .portal .hotel-layout {
+    gap: 24px;
+  }
+  .portal .ops-ribbon > div {
+    padding: 18px;
+  }
+}
+@media (max-width: 700px) {
+  .portal .hero-grid,
+  .portal .phone-demo,
+  .portal .hotel-layout {
+    grid-template-columns: 1fr;
+  }
+  .portal .hero .phone-demo {
+    margin-top: 20px;
+  }
+  .portal .phone-stage {
+    max-width: 360px;
+    width: 100%;
+    margin: auto;
+  }
+  .portal .phone-copy {
+    max-width: 100%;
+  }
+  .portal .ops-ribbon {
+    grid-template-columns: 1fr 1fr;
+  }
+  .portal .ops-ribbon b {
+    font-size: 26px;
+  }
+  .portal .insight-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .portal .dashboard-caption {
+    flex-direction: column;
+    padding: 13px;
+  }
+  .portal .hotel-canvas {
+    height: 340px;
+  }
+  .portal .phone-shell {
+    width: 270px;
+  }
+  .portal .phone-viewport {
+    height: 530px;
+  }
+  .portal .orbit-one {
+    left: 0;
+  }
+  .portal .orbit-two {
+    right: 0;
+  }
+}
+
+.portal .hero .phone-copy > .textlink { display:inline-block; margin-top:12px; font-size:13px; }

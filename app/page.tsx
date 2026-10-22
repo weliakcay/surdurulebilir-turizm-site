@@ -1,4 +1,6 @@
-import Image from "next/image";
+import { PhoneDemo } from "@/components/phone-demo";
+import { OperationsStory } from "@/components/operations-story";
+import { HotelModel } from "@/components/hotel-model";
 import Link from "next/link";
 import { tumHaberler } from "@/lib/content";
 import { Portal, NewsGrid } from "@/components/portal";
@@ -38,39 +40,7 @@ export default function Home() {
               Sürdürülebilir Turizm oluşumu kapsamında geliştiriyoruz.
             </p>
           </div>
-          <div className="hero-media">
-            <Image
-              src="/site/kapi-isletme.jpg"
-              alt="Otel operasyon alanında kontrol yapan çalışanları gösteren temsili görsel"
-              width={1200}
-              height={630}
-              sizes="(max-width:700px) 100vw, 50vw"
-              priority
-            />
-            <span className="photo-note">Temsili saha görseli</span>
-            <div className="record">
-              <div className="record-top">
-                <span>Greenlog / Kontrol kaydı</span>
-                <span className="pill">Örnek arayüz</span>
-              </div>
-              <h3>Soğuk oda kontrolü</h3>
-              <div className="record-line">
-                <span>Nokta</span>
-                <strong>Mutfak · Soğuk oda A</strong>
-              </div>
-              <div className="record-line">
-                <span>Kontrol zamanı</span>
-                <strong>10.00</strong>
-              </div>
-              <div className="record-line">
-                <span>Durum</span>
-                <strong>Kayıt oluşturuldu</strong>
-              </div>
-              <p className="tiny" style={{ margin: "9px 0 0" }}>
-                Temsili veridir; gerçek bir otel kaydı değildir.
-              </p>
-            </div>
-          </div>
+          <PhoneDemo />
         </div>
       </section>
       <div className="trustline">
@@ -80,6 +50,8 @@ export default function Home() {
           <span>Geçmiş kayıtlar ve raporlama</span>
         </div>
       </div>
+      <OperationsStory />
+      <HotelModel />
       <section className="section">
         <div className="wrap cop-teaser">
           <div>

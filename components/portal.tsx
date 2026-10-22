@@ -60,26 +60,6 @@ export function NewsGrid({
     </div>
   );
 }
-export function ProductScreen() {
-  return (
-    <div className="screen">
-      <div className="screenbar">
-        <strong>Greenlog / Kontrol noktaları</strong>
-        <span>Temsili veri</span>
-      </div>
-      {["Soğuk oda A", "Üretim mutfağı", "Havuz kontrol noktası"].map(
-        (name) => (
-          <div className="screen-row" key={name}>
-            <strong>{name}</strong>Kontrol formu · Kayıt geçmişi
-          </div>
-        ),
-      )}
-      <p className="tiny">
-        İş akışını anlatan örnek arayüzdür; gerçek müşteri kaydı değildir.
-      </p>
-    </div>
-  );
-}
 export function PilotCta() {
   return (
     <section className="section pale">
